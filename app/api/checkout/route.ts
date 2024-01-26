@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
 		],
 		client_reference_id: goal.id,
 		mode: 'payment',
-		success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/campanii`,
-		cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/campanii`,
+		success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/campaigns`,
+		cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/campaigns`,
     })
     return NextResponse.json(session.url)
 }

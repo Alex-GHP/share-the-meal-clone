@@ -41,13 +41,13 @@ const Page = async () => {
         <Link href={`/campaigns/${urgentGoal?.id}`}>
           <div className="bg-white border-2 border-[#353535] rounded-lg shadow-lg w-[330px] md:w-[500px] h-[500px] my-4 mx-auto hover:scale-110 transition duration-300">
             <Image
-              className="object-cover w-full h-[300px] rounded-lg"
+              className="object-cover w-full h-[350px] rounded-lg"
               src={urgentGoal?.coverImageUrl!}
               alt="Image of an urgent fundraising case"
               width={1000}
               height={1000}
             />
-            <div className="p-4 flex flex-col mt-10 ml-3">
+            <div className="p-4 flex flex-col my-2 ml-3">
               <button className="text-[#353535] font-semibold w-36 bg-yellow-400 py-3 active:bg-yellow-300 hover:scale-105 transition duration-300 mb-3 rounded-lg">
                 Donate now
               </button>
