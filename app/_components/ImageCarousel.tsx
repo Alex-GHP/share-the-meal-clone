@@ -17,7 +17,7 @@ const ImageCarousel = ({ imagesArray }: { imagesArray: string[] }) => {
       />
       <div className="gap-2 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9">
         {imagesArray.map((image, idx) => (
-          <img
+          <Image
             key={idx}
             onClick={() => setSelectedImage(idx)}
             src={image}
