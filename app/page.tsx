@@ -1,113 +1,96 @@
-import Image from 'next/image'
+import { prisma } from "@/db/prisma";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+const Page = async () => {
+  const goals = await prisma.goals.findMany();
+  let goalsCompleted = 0;
+  goals.map((g) => {
+    if (g.moneyDonated >= g.moneyGoal) goalsCompleted++;
+  });
+  const urgentGoal = await prisma.goals.findFirst({
+    where: {
+      urgent: true,
+    },
+  });
+  const {
+    _sum: { supporters },
+  } = await prisma.goals.aggregate({
+    _sum: {
+      supporters: true,
+    },
+  });
+  const {
+    _sum: { moneyDonated },
+  } = await prisma.goals.aggregate({
+    _sum: {
+      moneyDonated: true,
+    },
+  });
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
+    <>
+      <h1 className="font-bold text-2xl text-[#353535] text-center my-4 mx-10 sm:text-4xl">
+        Fight poverty among helpless children through the DonorHub application.
+      </h1>
+      <p className="text-center mb-8 mx-10 text-[#353535] text-2xl">
+        Simply browse through our fundraising goals and donate to the causes
+        that matter to you.
+      </p>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-10 max-w-[1100px] mx-auto">
+        <Link href={`/campaigns/${urgentGoal?.id}`}>
+          <div className="bg-white border-2 border-[#353535] rounded-lg shadow-lg w-[330px] md:w-[500px] h-[500px] my-4 mx-auto hover:scale-110 transition duration-300">
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+              className="object-cover w-full h-[300px] rounded-lg"
+              src={urgentGoal?.coverImageUrl!}
+              alt="Image of an urgent fundraising case"
+              width={1000}
+              height={1000}
             />
-          </a>
+            <div className="p-4 flex flex-col mt-10 ml-3">
+              <button className="text-[#353535] font-semibold w-36 bg-yellow-400 py-3 active:bg-yellow-300 hover:scale-105 transition duration-300 mb-3 rounded-lg">
+                Donate now
+              </button>
+              <p className="text-2xl text-[#353535]">
+                <span className="text-red-500 font-bold">Urgent: </span>
+                {urgentGoal?.title}
+              </p>
+            </div>
+          </div>
+        </Link>
+        <div className="hover:scale-110 transition duration-300 bg-white w-[330px] md:w-[500px] mx-auto border-2 border-[#353535] rounded-lg shadow-lg my-4">
+          <h3 className="text-center font-bold text-3xl my-4 text-[#353535]">
+            Our impact
+          </h3>
+          <Image
+            src="/romania.png"
+            alt="image of Romania"
+            width={300}
+            height={300}
+            className="mx-auto"
+          ></Image>
+          <div className="flex flex-col items-center my-10 font-semibold gap-3 text-2xl">
+            <p>
+              Money donated:{" "}
+              <span className="text-blue-500 ">{moneyDonated}</span>
+            </p>
+            <p>
+              Total supporters:{" "}
+              <span className="text-yellow-400 drop-shadow-sm">
+                {supporters}
+              </span>
+            </p>
+            <p>
+              Goals completed:{" "}
+              <span className="text-red-500 drop-shadow-sm">
+                {goalsCompleted}
+              </span>
+            </p>
+          </div>
         </div>
       </div>
+    </>
+  );
+};
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default Page;

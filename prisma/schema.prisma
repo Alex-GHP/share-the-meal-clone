@@ -1,0 +1,25 @@
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Goals {
+  id              Int      @id @default(autoincrement())
+  title           String
+  supporters      Int
+  moneyGoal       Int
+  moneyDonated    Int
+  longDescription String   @db.Text
+  description     String
+  galleryImages   String   @db.Text
+  coverImageUrl   String
+  locationLat     Float?
+  locationLng     Float?
+  locationName    String?
+  urgent          Boolean?
+}
